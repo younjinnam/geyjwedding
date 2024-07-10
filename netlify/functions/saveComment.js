@@ -26,9 +26,13 @@ exports.handler = async (event) => {
         fs.appendFileSync(filePath, comment + '\n', 'utf8');
         console.log('Comment saved successfully');
 
+        // Read the file to verify the comment was saved
+        const comments = fs.readFileSync(filePath, 'utf8').split('\n').filter(Boolean);
+        console.log('Current comments:', comments);
+
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: 'Comment saved successfully' }),
+            body: JSON.stringify(comments),
         };
     } catch (error) {
         console.error('Error saving comment:', error.message);

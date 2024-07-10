@@ -14,19 +14,22 @@
     <div id="comments-section"></div>
 
     <script>
+        let comments = [];
+
         const loadComments = async () => {
             try {
                 const response = await fetch('/.netlify/functions/getComments');
-                const comments = await response.json();
+                comments = await response.json();
                 console.log('Comments:', comments);
-                if (!Array.isArray(comments)) {
-                    throw new Error('Invalid comments format');
-                }
-                const commentsSection = document.getElementById('comments-section');
-                commentsSection.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
+                displayComments();
             } catch (error) {
                 console.error('Error loading comments:', error);
             }
+        };
+
+        const displayComments = () => {
+            const commentsSection = document.getElementById('comments-section');
+            commentsSection.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
         };
 
         const submitComment = async () => {
@@ -40,11 +43,12 @@
                 body: JSON.stringify({ comment })
             });
 
-            const result = await response.json();
             if (response.ok) {
-                alert(result.message);
-                loadComments();
+                comments = await response.json();
+                displayComments();
+                alert('Comment saved successfully');
             } else {
+                const result = await response.json();
                 alert(result.message);
             }
         };
