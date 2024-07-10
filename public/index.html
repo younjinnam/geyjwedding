@@ -15,10 +15,15 @@
 
     <script>
         const loadComments = async () => {
-            const response = await fetch('/.netlify/functions/getComments');
-            const comments = await response.json();
-            const commentsSection = document.getElementById('comments-section');
-            commentsSection.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
+            try {
+                const response = await fetch('/.netlify/functions/getComments');
+                const comments = await response.json();
+                console.log('Comments:', comments);
+                const commentsSection = document.getElementById('comments-section');
+                commentsSection.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
+            } catch (error) {
+                console.error('Error loading comments:', error);
+            }
         };
 
         const submitComment = async () => {
