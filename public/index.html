@@ -1,0 +1,182 @@
+<!DOCTYPE HTML>
+<!--
+	Highlights by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+	<title>Highlights by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="is-preload">
+
+<!-- Header -->
+<section id="header">
+	<header class="major">
+		<h1>Highlights</h1>
+		<p>A fun little { responsive } single pager by <a href="http://html5up.net">HTML5 UP</a></p>
+	</header>
+	<div class="container">
+		<ul class="actions special">
+			<li><a href="#one" class="button primary scrolly">Begin</a></li>
+		</ul>
+	</div>
+</section>
+
+<!-- One -->
+<section id="one" class="main special">
+	<div class="container">
+		<span class="image fit primary"><img src="images/pic01.jpg" alt="" /></span>
+		<div class="content">
+			<header class="major">
+				<h2>Who I am</h2>
+			</header>
+			<p>Aliquam ante ac id. Adipiscing interdum lorem praesent fusce pellentesque arcu feugiat. Consequat sed ultricies rutrum. Sed adipiscing eu amet interdum lorem blandit vis ac commodo aliquet integer vulputate phasellus lorem ipsum dolor lorem magna consequat sed etiam adipiscing interdum.</p>
+		</div>
+		<a href="#two" class="goto-next scrolly">Next</a>
+	</div>
+</section>
+
+<!-- Two -->
+<section id="two" class="main special">
+	<div class="container">
+		<span class="image fit primary"><img src="images/pic02.jpg" alt="" /></span>
+		<div class="content">
+			<header class="major">
+				<h2>Stuff I do</h2>
+			</header>
+			<p>Consequat sed ultricies rutrum. Sed adipiscing eu amet interdum lorem blandit vis ac commodo aliquet vulputate.</p>
+			<ul class="icons-grid">
+				<li>
+					<span class="icon solid major fa-camera-retro"></span>
+					<h3>Magna Etiam</h3>
+				</li>
+				<li>
+					<span class="icon solid major fa-pencil-alt"></span>
+					<h3>Lorem Ipsum</h3>
+				</li>
+				<li>
+					<span class="icon solid major fa-code"></span>
+					<h3>Nulla Tempus</h3>
+				</li>
+				<li>
+					<span class="icon solid major fa-coffee"></span>
+					<h3>Sed Feugiat</h3>
+				</li>
+			</ul>
+		</div>
+		<a href="#three" class="goto-next scrolly">Next</a>
+	</div>
+</section>
+
+<!-- Three -->
+<section id="three" class="main special">
+	<div class="container">
+		<span class="image fit primary"><img src="images/pic03.jpg" alt="" /></span>
+		<div class="content">
+			<header class="major">
+				<h2>One more thing</h2>
+			</header>
+			<p>Aliquam ante ac id. Adipiscing interdum lorem praesent fusce pellentesque arcu feugiat. Consequat sed ultricies rutrum. Sed adipiscing eu amet interdum lorem blandit vis ac commodo aliquet integer vulputate phasellus lorem ipsum dolor lorem magna consequat sed etiam adipiscing interdum.</p>
+		</div>
+		<a href="#footer" class="goto-next scrolly">Next</a>
+	</div>
+</section>
+
+<!-- Footer -->
+<section id="footer">
+	<div class="container">
+		<header class="major">
+			<h2>Get in touch</h2>
+		</header>
+		<div class="card-footer">
+			<form onsubmit="addComment(event)">
+				<div class="form-group">
+					<input type="text" class="form-control" id="commenterName" placeholder="이름을 입력하세요" required>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" id="commentText" placeholder="댓글을 입력하세요" required>
+				</div>
+				<button type="submit" class="btn btn-primary">작성</button>
+			</form>
+			<div class="comments mt-3">
+			</div>
+		</div>
+	</div>
+	<footer>
+		<ul class="icons">
+			<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+			<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+			<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+			<li><a href="#" class="icon brands alt fa-dribbble"><span class="label">Dribbble</span></a></li>
+			<li><a href="#" class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
+		</ul>
+		<ul class="copyright">
+			<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li><li>Demo Images: <a href="http://unsplash.com">Unsplash</a></li>
+		</ul>
+	</footer>
+</section>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/jquery.scrolly.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+	function addComment(event) {
+		event.preventDefault();
+		var commenterName = document.getElementById("commenterName").value;
+		var commentText = document.getElementById("commentText").value;
+
+		fetch('/.netlify/functions/save_comment', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ commenterName, commentText }),
+		}).then(response => {
+			if (response.ok) {
+				loadComments();
+				document.getElementById("commenterName").value = '';
+				document.getElementById("commentText").value = '';
+			} else {
+				alert('Failed to save comment.');
+			}
+		}).catch(error => {
+			console.error('Error:', error);
+		});
+	}
+
+	function loadComments() {
+		fetch('/.netlify/functions/get_comments')
+			.then(response => response.json())
+			.then(comments => {
+				const commentsDiv = document.querySelector(".comments");
+				commentsDiv.innerHTML = '';
+				comments.forEach(comment => {
+					const commentDiv = document.createElement("div");
+					commentDiv.className = "card my-3";
+					commentDiv.innerHTML = `
+						<div class="card-body">
+							<h5 class="card-title">${comment.commenterName}</h5>
+							<p class="card-text">${comment.commentText}</p>
+							<p class="card-text"><small class="text-muted">${comment.date}</small></p>
+						</div>
+					`;
+					commentsDiv.appendChild(commentDiv);
+				});
+			}).catch(error => {
+				console.error('Error:', error);
+			});
+	}
+
+	window.onload = loadComments;
+</script>
+</body>
+</html>
