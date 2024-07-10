@@ -19,9 +19,6 @@
                 const response = await fetch('/.netlify/functions/getComments');
                 const comments = await response.json();
                 console.log('Comments:', comments);
-                if (!Array.isArray(comments)) {
-                    throw new Error('Invalid comments format');
-                }
                 const commentsSection = document.getElementById('comments-section');
                 commentsSection.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
             } catch (error) {
