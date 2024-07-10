@@ -14,26 +14,18 @@
     <div id="comments-section"></div>
 
     <script>
-        let comments = [];
-
         const loadComments = async () => {
             try {
-                const savedComments = localStorage.getItem('comments');
-                if (savedComments) {
-                    comments = JSON.parse(savedComments);
-                } else {
-                    const response = await fetch('/.netlify/functions/getComments');
-                    comments = await response.json();
-                    localStorage.setItem('comments', JSON.stringify(comments));
-                }
+                const response = await fetch('/.netlify/functions/getComments');
+                const comments = await response.json();
                 console.log('Comments:', comments);
-                displayComments();
+                displayComments(comments);
             } catch (error) {
                 console.error('Error loading comments:', error);
             }
         };
 
-        const displayComments = () => {
+        const displayComments = (comments) => {
             const commentsSection = document.getElementById('comments-section');
             commentsSection.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
         };
@@ -51,9 +43,7 @@
             });
 
             if (response.ok) {
-                comments.push(comment);
-                localStorage.setItem('comments', JSON.stringify(comments));
-                displayComments();
+                await loadComments();
                 alert('Comment saved successfully');
             } else {
                 const result = await response.json();

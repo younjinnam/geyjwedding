@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const faunadb = require('faunadb');
+const q = faunadb.query;
 
 exports.handler = async (event) => {
     console.log('saveComment function invoked');
@@ -20,19 +20,19 @@ exports.handler = async (event) => {
         };
     }
 
-    try {
-        const filePath = path.resolve('/tmp/comments.txt');
-        console.log('Saving comment to:', filePath);
-        fs.appendFileSync(filePath, comment + '\n', 'utf8');
-        console.log('Comment saved successfully');
+    const client = new faunadb.Client({ secret: 'fnAFl9bH_YAARLTlh4DaCl0Ys14Pwn9eVX7y49Oe' });
 
-        // Read the file to verify the comment was saved
-        const comments = fs.readFileSync(filePath, 'utf8').split('\n').filter(Boolean);
-        console.log('Current comments:', comments);
+    try {
+        await client.query(
+            q.Create(
+                q.Collection('comments'),
+                { data: { comment: comment } }
+            )
+        );
 
         return {
             statusCode: 200,
-            body: JSON.stringify(comments),
+            body: JSON.stringify({ message: 'Comment saved successfully' }),
         };
     } catch (error) {
         console.error('Error saving comment:', error.message);

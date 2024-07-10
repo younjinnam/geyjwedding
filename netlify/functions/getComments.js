@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const faunadb = require('faunadb');
+const q = faunadb.query;
 
 exports.handler = async (event) => {
     console.log('getComments function invoked');
@@ -10,10 +10,17 @@ exports.handler = async (event) => {
         };
     }
 
+    const client = new faunadb.Client({ secret: 'fnAFl9bH_YAARLTlh4DaCl0Ys14Pwn9eVX7y49Oe' });
+
     try {
-        const filePath = path.resolve('/tmp/comments.txt');
-        console.log('Reading comments from:', filePath);
-        const comments = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8').split('\n').filter(Boolean) : [];
+        const result = await client.query(
+            q.Map(
+                q.Paginate(q.Documents(q.Collection('comments'))),
+                q.Lambda(x => q.Get(x))
+            )
+        );
+
+        const comments = result.data.map(entry => entry.data.comment);
         console.log('Comments read successfully:', comments);
 
         return {
