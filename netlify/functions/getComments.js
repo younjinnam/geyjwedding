@@ -10,7 +10,7 @@ exports.handler = async (event) => {
     }
 
     try {
-        const filePath = path.join(__dirname, 'comments.txt');
+        const filePath = path.resolve('/tmp/comments.txt');
         const comments = fs.readFileSync(filePath, 'utf8').split('\n').filter(Boolean);
 
         return {
