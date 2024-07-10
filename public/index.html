@@ -18,8 +18,14 @@
 
         const loadComments = async () => {
             try {
-                const response = await fetch('/.netlify/functions/getComments');
-                comments = await response.json();
+                const savedComments = localStorage.getItem('comments');
+                if (savedComments) {
+                    comments = JSON.parse(savedComments);
+                } else {
+                    const response = await fetch('/.netlify/functions/getComments');
+                    comments = await response.json();
+                    localStorage.setItem('comments', JSON.stringify(comments));
+                }
                 console.log('Comments:', comments);
                 displayComments();
             } catch (error) {
@@ -34,6 +40,7 @@
 
         const submitComment = async () => {
             const comment = document.getElementById('comment').value;
+            if (!comment) return;
 
             const response = await fetch('/.netlify/functions/saveComment', {
                 method: 'POST',
@@ -44,7 +51,8 @@
             });
 
             if (response.ok) {
-                comments = await response.json();
+                comments.push(comment);
+                localStorage.setItem('comments', JSON.stringify(comments));
                 displayComments();
                 alert('Comment saved successfully');
             } else {
