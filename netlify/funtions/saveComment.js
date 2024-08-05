@@ -11,23 +11,23 @@ exports.handler = async (event) => {
     }
 
     const data = JSON.parse(event.body);
-    const name = data.name;
+    const myname = data.myname; // 'name' 대신 'myname' 사용
     const comment = data.comment;
 
-    if (!name || !comment) {
+    if (!myname || !comment) {
         return {
             statusCode: 400,
             body: JSON.stringify({ message: 'Name and comment are required' }),
         };
     }
 
-    const client = new faunadb.Client({ secret: 'fnAFl9bH_YAARLTlh4DaCl0Ys14Pwn9eVX7y49Oe' });
+    const client = new faunadb.Client({ secret: 'YOUR_FAUNADB_SECRET' });
 
     try {
         await client.query(
             q.Create(
                 q.Collection('comments'),
-                { data: { name: name, comment: comment } }  // name과 comment를 함께 저장
+                { data: { myname: myname, comment: comment } }  // myname과 comment를 함께 저장
             )
         );
 

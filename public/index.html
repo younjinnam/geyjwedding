@@ -121,10 +121,10 @@
 					<form id="commentForm">
 						<div class="fields">
 							<div class="field half">
-								<input type="text" id="name" name="name" placeholder="Name" />
+								<input type="text" id="myname" name="myname" placeholder="Name" autocomplete="name" />
 							</div>
 							<div class="field">
-								<textarea id="comment" name="comment" placeholder="Write your comment here"></textarea>
+								<textarea id="comment" name="comment" placeholder="Write your comment here" autocomplete="off"></textarea>
 							</div>
 						</div>
 						<ul class="actions special">
@@ -133,6 +133,8 @@
 					</form>
 				</div>
 			</div>
+
+
 		</section>
 
 		<!-- Footer -->
@@ -190,14 +192,14 @@
                 } else if (comments.length === 1) {
                     commentsSection.innerHTML = `
                         <div class="comment-slide">
-                            <strong>${comments[0].name}</strong>
+                            <strong>${comments[0].myname}</strong>
                             <br>
                             ${comments[0].comment}
                         </div>`;
                 } else {
                     commentsSection.innerHTML = comments.map(comment =>
                         `<div class="comment-slide">
-                            <strong>${comment.name}</strong>
+                            <strong>${comment.myname}</strong>
                             <br>
                             ${comment.comment}
                         </div>`
@@ -233,17 +235,17 @@
 
             const submitComment = async (event) => {
                 event.preventDefault();
-                const name = document.getElementById('name').value;
+                const myname = document.getElementById('myname').value;
                 const comment = document.getElementById('comment').value;
 
-                if (!name || !comment) return;
+                if (!myname || !comment) return;
 
                 const response = await fetch('/.netlify/functions/saveComment', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name, comment })  // name과 comment를 JSON으로 전송
+                    body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
                 });
 
                 if (response.ok) {
@@ -258,5 +260,6 @@
             document.getElementById('commentForm').addEventListener('submit', submitComment);
             window.onload = loadComments;
 		</script>
+
 	</body>
 </html>

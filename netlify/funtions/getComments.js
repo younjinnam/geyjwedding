@@ -20,8 +20,9 @@ exports.handler = async (event) => {
             )
         );
 
+        // 'name' 필드를 'myname'으로 변경하여 데이터를 가져옵니다.
         const comments = result.data.map(entry => ({
-            name: entry.data.name,
+            myname: entry.data.myname,
             comment: entry.data.comment
         }));
         console.log('Comments read successfully:', comments);
