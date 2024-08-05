@@ -1,5 +1,5 @@
 /*
-	Highlights by HTML5 UP
+	Big Picture by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
@@ -8,167 +8,212 @@
 
 	var	$window = $(window),
 		$body = $('body'),
-		$html = $('html');
+		$header = $('#header'),
+		$all = $body.add($header);
 
 	// Breakpoints.
 		breakpoints({
-			large:   [ '981px',  '1680px' ],
-			medium:  [ '737px',  '980px'  ],
-			small:   [ '481px',  '736px'  ],
-			xsmall:  [ null,     '480px'  ]
+			xxlarge: [ '1681px',  '1920px' ],
+			xlarge:  [ '1281px',  '1680px' ],
+			large:   [ '1001px',  '1280px' ],
+			medium:  [ '737px',   '1000px' ],
+			small:   [ '481px',   '736px'  ],
+			xsmall:  [ null,      '480px'  ]
 		});
 
 	// Play initial animations on page load.
 		$window.on('load', function() {
-			window.setTimeout(function() {
+			setTimeout(function() {
 				$body.removeClass('is-preload');
 			}, 100);
 		});
 
 	// Touch mode.
-		if (browser.mobile) {
-
-			var $wrapper;
-
-			// Create wrapper.
-				$body.wrapInner('<div id="wrapper" />');
-				$wrapper = $('#wrapper');
-
-				// Hack: iOS vh bug.
-					if (browser.os == 'ios')
-						$wrapper
-							.css('margin-top', -25)
-							.css('padding-bottom', 25);
-
-				// Pass scroll event to window.
-					$wrapper.on('scroll', function() {
-						$window.trigger('scroll');
-					});
-
-			// Scrolly.
-				$window.on('load.hl_scrolly', function() {
-
-					$('.scrolly').scrolly({
-						speed: 1500,
-						parent: $wrapper,
-						pollOnce: true
-					});
-
-					$window.off('load.hl_scrolly');
-
-				});
-
-			// Enable touch mode.
-				$html.addClass('is-touch');
-
-		}
+		if (browser.mobile)
+			$body.addClass('is-touch');
 		else {
 
-			// Scrolly.
-				$('.scrolly').scrolly({
-					speed: 1500
-				});
+			breakpoints.on('<=small', function() {
+				$body.addClass('is-touch');
+			});
+
+			breakpoints.on('>small', function() {
+				$body.removeClass('is-touch');
+			});
 
 		}
 
-	// Header.
-		var $header = $('#header'),
-			$headerTitle = $header.find('header'),
-			$headerContainer = $header.find('.container');
+	// Fix: IE flexbox fix.
+		if (browser.name == 'ie') {
 
-		// Make title fixed.
-			if (!browser.mobile) {
+			var $main = $('.main.fullscreen'),
+				IEResizeTimeout;
 
-				$window.on('load.hl_headerTitle', function() {
+			$window
+				.on('resize.ie-flexbox-fix', function() {
 
-					breakpoints.on('>medium', function() {
+					clearTimeout(IEResizeTimeout);
 
-						$headerTitle
-							.css('position', 'fixed')
-							.css('height', 'auto')
-							.css('top', '50%')
-							.css('left', '0')
-							.css('width', '100%')
-							.css('margin-top', ($headerTitle.outerHeight() / -2));
+					IEResizeTimeout = setTimeout(function() {
 
-					});
+						var wh = $window.height();
 
-					breakpoints.on('<=medium', function() {
+						$main.each(function() {
 
-						$headerTitle
-							.css('position', '')
-							.css('height', '')
-							.css('top', '')
-							.css('left', '')
-							.css('width', '')
-							.css('margin-top', '');
+							var $this = $(this);
+
+							$this.css('height', '');
+
+							if ($this.height() <= wh)
+								$this.css('height', (wh - 50) + 'px');
+
+						});
 
 					});
 
-					$window.off('load.hl_headerTitle');
+				})
+				.triggerHandler('resize.ie-flexbox-fix');
 
-				});
+		}
 
-			}
+	// Gallery.
+		$window.on('load', function() {
 
-		// Scrollex.
-			breakpoints.on('>small', function() {
-				$header.scrollex({
-					terminate: function() {
+			var $gallery = $('.gallery');
 
-						$headerTitle.css('opacity', '');
-
-					},
-					scroll: function(progress) {
-
-						// Fade out title as user scrolls down.
-							if (progress > 0.5)
-								x = 1 - progress;
-							else
-								x = progress;
-
-							$headerTitle.css('opacity', Math.max(0, Math.min(1, x * 2)));
-
-					}
-				});
+			$gallery.poptrox({
+				baseZIndex: 10001,
+				useBodyOverflow: false,
+				usePopupEasyClose: false,
+				overlayColor: '#1f2328',
+				overlayOpacity: 0.65,
+				usePopupDefaultStyling: false,
+				usePopupCaption: true,
+				popupLoaderText: '',
+				windowMargin: 50,
+				usePopupNav: true
 			});
 
-			breakpoints.on('<=small', function() {
+			// Hack: Adjust margins when 'small' activates.
+				breakpoints.on('>small', function() {
+					$gallery.each(function() {
+						$(this)[0]._poptrox.windowMargin = 50;
+					});
+				});
 
-				$header.unscrollex();
-
-			});
-
-	// Main sections.
-		$('.main').each(function() {
-
-			var $this = $(this),
-				$primaryImg = $this.find('.image.primary > img'),
-				$bg,
-				options;
-
-			// No primary image? Bail.
-				if ($primaryImg.length == 0)
-					return;
-
-			// Create bg and append it to body.
-				$bg = $('<div class="main-bg" id="' + $this.attr('id') + '-bg"></div>')
-					.css('background-image', (
-						'url("assets/css/images/overlay.png"), url("' + $primaryImg.attr('src') + '")'
-					))
-					.appendTo($body);
-
-			// Scrollex.
-				$this.scrollex({
-					mode: 'middle',
-					delay: 200,
-					top: '-10vh',
-					bottom: '-10vh',
-					init: function() { $bg.removeClass('active'); },
-					enter: function() { $bg.addClass('active'); },
-					leave: function() { $bg.removeClass('active'); }
+				breakpoints.on('<=small', function() {
+					$gallery.each(function() {
+						$(this)[0]._poptrox.windowMargin = 5;
+					});
 				});
 
 		});
+
+	// Section transitions.
+		if (browser.canUse('transition')) {
+
+			var on = function() {
+
+				// Galleries.
+					$('.gallery')
+						.scrollex({
+							top:		'30vh',
+							bottom:		'30vh',
+							delay:		50,
+							initialize:	function() { $(this).addClass('inactive'); },
+							terminate:	function() { $(this).removeClass('inactive'); },
+							enter:		function() { $(this).removeClass('inactive'); },
+							leave:		function() { $(this).addClass('inactive'); }
+						});
+
+				// Generic sections.
+					$('.main.style1')
+						.scrollex({
+							mode:		'middle',
+							delay:		100,
+							initialize:	function() { $(this).addClass('inactive'); },
+							terminate:	function() { $(this).removeClass('inactive'); },
+							enter:		function() { $(this).removeClass('inactive'); },
+							leave:		function() { $(this).addClass('inactive'); }
+						});
+
+					$('.main.style2')
+						.scrollex({
+							mode:		'middle',
+							delay:		100,
+							initialize:	function() { $(this).addClass('inactive'); },
+							terminate:	function() { $(this).removeClass('inactive'); },
+							enter:		function() { $(this).removeClass('inactive'); },
+							leave:		function() { $(this).addClass('inactive'); }
+						});
+
+				// Contact.
+					$('#contact')
+						.scrollex({
+							top:		'50%',
+							delay:		50,
+							initialize:	function() { $(this).addClass('inactive'); },
+							terminate:	function() { $(this).removeClass('inactive'); },
+							enter:		function() { $(this).removeClass('inactive'); },
+							leave:		function() { $(this).addClass('inactive'); }
+						});
+
+			};
+
+			var off = function() {
+
+				// Galleries.
+					$('.gallery')
+						.unscrollex();
+
+				// Generic sections.
+					$('.main.style1')
+						.unscrollex();
+
+					$('.main.style2')
+						.unscrollex();
+
+				// Contact.
+					$('#contact')
+						.unscrollex();
+
+			};
+
+			breakpoints.on('<=small', off);
+			breakpoints.on('>small', on);
+
+		}
+
+	// Events.
+		var resizeTimeout, resizeScrollTimeout;
+
+		$window
+			.on('resize', function() {
+
+				// Disable animations/transitions.
+					$body.addClass('is-resizing');
+
+				clearTimeout(resizeTimeout);
+
+				resizeTimeout = setTimeout(function() {
+
+					// Update scrolly links.
+						$('a[href^="#"]').scrolly({
+							speed: 1500,
+							offset: $header.outerHeight() - 1
+						});
+
+					// Re-enable animations/transitions.
+						setTimeout(function() {
+							$body.removeClass('is-resizing');
+							$window.trigger('scroll');
+						}, 0);
+
+				}, 100);
+
+			})
+			.on('load', function() {
+				$window.trigger('resize');
+			});
 
 })(jQuery);
