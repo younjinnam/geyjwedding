@@ -2368,17 +2368,22 @@ input, select, textarea {
 		}
 
 /* Comments */
+/* 댓글 슬라이딩 애니메이션을 위한 CSS */
 #comments-section {
     position: relative;
-    height: 50px; /* 슬라이딩 높이 고정 */
+    height: 100px; /* 슬라이딩 높이 고정 (적절히 조정하세요) */
     overflow: hidden;
     display: flex;
     transition: transform 0.5s ease;
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    text-align: center; /* 텍스트 가운데 정렬 */
 }
 
 .comment-slide {
     min-width: 100%; /* 각 슬라이드가 화면 전체를 차지하도록 설정 */
     box-sizing: border-box;
+    font-size: 1.2em;
 }
 
 

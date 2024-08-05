@@ -20,7 +20,10 @@ exports.handler = async (event) => {
             )
         );
 
-        const comments = result.data.map(entry => entry.data.comment);
+        const comments = result.data.map(entry => ({
+            name: entry.data.name,
+            comment: entry.data.comment
+        }));
         console.log('Comments read successfully:', comments);
 
         return {
