@@ -234,28 +234,32 @@
             };
 
             const submitComment = async (event) => {
-                event.preventDefault();
-                const myname = document.getElementById('myname').value;
-                const comment = document.getElementById('comment').value;
+    			event.preventDefault();
+			    const myname = document.getElementById('myname').value;
+			    const comment = document.getElementById('comment').value;
 
-                if (!myname || !comment) return;
+    			if (!myname || !comment) {
+			        alert('Name and comment are required.');
+			        return;
+			    }
 
-                const response = await fetch('/.netlify/functions/saveComment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
-                });
+			    const response = await fetch('/.netlify/functions/saveComment', {
+			        method: 'POST',
+			        headers: {
+            			'Content-Type': 'application/json'
+			        },
+			        body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
+			    });
 
-                if (response.ok) {
-                    await loadComments();
-                    alert('댓글이 성공적으로 저장되었습니다');
-                } else {
-                    const result = await response.json();
-                    alert(result.message);
-                }
-            };
+			    if (response.ok) {
+			        await loadComments();
+			        alert('댓글이 성공적으로 저장되었습니다');
+			    } else {
+			        const result = await response.json();
+			        alert(result.message);
+			    }
+			};
+
 
             document.getElementById('commentForm').addEventListener('submit', submitComment);
             window.onload = loadComments;

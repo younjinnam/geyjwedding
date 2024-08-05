@@ -11,12 +11,13 @@ exports.handler = async (event) => {
     }
 
     const data = JSON.parse(event.body);
+    const myname = data.myname; // 'name' 대신 'myname' 사용
     const comment = data.comment;
 
-    if (!comment) {
+    if (!myname || !comment) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ message: 'Comment is required' }),
+            body: JSON.stringify({ message: 'Name and comment are required' }),
         };
     }
 
@@ -26,7 +27,7 @@ exports.handler = async (event) => {
         await client.query(
             q.Create(
                 q.Collection('comments'),
-                { data: { comment: comment } }
+                { data: { myname: myname, comment: comment } }  // myname과 comment를 함께 저장
             )
         );
 
