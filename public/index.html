@@ -2,7 +2,7 @@
 
 <html>
 	<head>
-		<title>Big Picture by HTML5 UP</title>
+		<title>Gieun_Younjuin</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -112,10 +112,10 @@
 		<section id="contact" class="main style3 secondary">
 			<div class="content">
 				<header>
-					<h2>Comment</h2>
 					<div id="comments-section" class="comments-slider">
 						<!-- 댓글이 이곳에 표시됩니다 -->
 					</div>
+					<h2>Comment</h2>
 				</header>
 				<div class="box">
 					<form id="commentForm">
@@ -164,7 +164,7 @@
    	            "mapHeight" : "360"
        	    }).render();
 		</script>
-		<!-- DB 댓글 연동 및 슬라이딩 기능을 위한 스크립트 -->
+		<!-- DB 댓글 연동 및 슬라이딩 기능을 위한 스크립트
 		<script>
 			let currentIndex = 0;
 			let commentInterval;
@@ -248,46 +248,91 @@
 			document.getElementById('commentForm').addEventListener('submit', submitComment);
 			window.onload = loadComments;
 		</script>
-
-		<!-- ************DB 댓글 연동 스크립트 backup****************
-		<script>
-			const loadComments = async () => {
-       	        try {
-           	        const response = await fetch('/.netlify/functions/getComments');
-               	    const comments = await response.json();
-                   	console.log('Comments:', comments);
-                    displayComments(comments);
-   	            } catch (error) {
-       	            console.error('Error loading comments:', error);
-           	    }
-            };
-        	    const displayComments = (comments) => {
-           	    const commentsSection = document.getElementById('comments-section');
-               	commentsSection.innerHTML = comments.map(comment => `<p><strong>${comment.name}:</strong> ${comment.comment}</p>`).join('');
-            };
-        	    const submitComment = async (event) => {
-           	    event.preventDefault();
-               	const name = document.getElementById('name').value;
-                const comment = document.getElementById('comment').value;
-   	            if (!name || !comment) return;
-            	    const response = await fetch('/.netlify/functions/saveComment', {
-               	    method: 'POST',
-                    headers: {
-   	                    'Content-Type': 'application/json'
-       	            },
-           	        body: JSON.stringify({ name, comment })
-               	});
-    	            if (response.ok) {
-       	            await loadComments();
-           	        alert('Comment saved successfully');
-               	} else {
-                    const result = await response.json();
-   	                alert(result.message);
-       	        }
-           	};
-	            document.getElementById('commentForm').addEventListener('submit', submitComment);
-        	    window.onload = loadComments;
-		</script>
 		-->
+
+		<!-- DB 댓글 연동 및 슬라이딩 기능을 위한 스크립트 -->
+		<script>
+			let currentIndex = 0;
+            let commentInterval;
+
+            const loadComments = async () => {
+                try {
+                    const response = await fetch('/.netlify/functions/getComments');
+                    const comments = await response.json();
+                    console.log('Comments:', comments);
+                    displayComments(comments);
+                } catch (error) {
+                    console.error('Error loading comments:', error);
+                }
+            };
+
+            const displayComments = (comments) => {
+                const commentsSection = document.getElementById('comments-section');
+                commentsSection.innerHTML = '';
+
+                if (comments.length === 0) {
+                    commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
+                } else if (comments.length === 1) {
+                    commentsSection.innerHTML = `<p class="comment">${comments[0].name}: ${comments[0].comment}</p>`;
+                } else {
+                    commentsSection.innerHTML = comments.map(comment =>
+                        `<div class="comment-slide">${comment.name}: ${comment.comment}</div>`
+                    ).join('');
+
+                    // 슬라이딩이 발생하도록 하기 위해 딜레이를 주어 슬라이딩 애니메이션이 적용되도록 함
+                    setTimeout(() => {
+                        startSlidingComments();
+                    }, 100); // 100ms 정도의 딜레이를 추가하여 CSS가 먼저 반영된 후 슬라이딩 동작이 시작되도록 함
+                }
+            };
+
+            const startSlidingComments = () => {
+                const commentsSection = document.getElementById('comments-section');
+                let index = 0;
+
+                commentInterval = setInterval(() => {
+                    index++;
+                    commentsSection.style.transform = `translateX(-${index * 100}%)`;
+
+                    if (index === commentsSection.children.length) {
+                        setTimeout(() => {
+                            commentsSection.style.transition = 'none';
+                            commentsSection.style.transform = 'translateX(0)';
+                            index = 0;
+                            setTimeout(() => {
+                                commentsSection.style.transition = 'transform 0.5s ease';
+                            }, 50);
+                        }, 500);
+                    }
+                }, 2000);
+            };
+
+            const submitComment = async (event) => {
+                event.preventDefault();
+                const name = document.getElementById('name').value;
+                const comment = document.getElementById('comment').value;
+
+                if (!name || !comment) return;
+
+                const response = await fetch('/.netlify/functions/saveComment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, comment })  // name과 comment를 JSON으로 전송
+                });
+
+                if (response.ok) {
+                    await loadComments();
+                    alert('댓글이 성공적으로 저장되었습니다');
+                } else {
+                    const result = await response.json();
+                    alert(result.message);
+                }
+            };
+
+            document.getElementById('commentForm').addEventListener('submit', submitComment);
+            window.onload = loadComments;
+		</script>
 </body>
 </html>
