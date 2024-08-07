@@ -226,7 +226,7 @@
 
 			        // 다음 슬라이드로 이동
 			        index = (index + 1) % totalSlides;
-			    }, 4000); // 슬라이드 전환 간격 (2초)
+			    }, 2000); // 슬라이드 전환 간격 (2초)
 			};
 
 			const submitComment = async (event) => {
@@ -248,12 +248,14 @@
 			    });
 
 			    if (response.ok) {
-			        await loadComments();
-			        alert('댓글이 성공적으로 저장되었습니다');
-			    } else {
-			        const result = await response.json();
-			        alert(result.message);
-			    }
+				    await loadComments();
+				    if (window.confirm('댓글이 성공적으로 저장되었습니다.')) {
+				        window.location.reload();
+				    }
+				} else {
+				    const result = await response.json();
+				    alert(result.message);
+				}
 			};
 
 			document.getElementById('commentForm').addEventListener('submit', submitComment);
