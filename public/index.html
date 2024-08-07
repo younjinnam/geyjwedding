@@ -172,87 +172,90 @@
 			let commentInterval;
 
 			const loadComments = async () => {
-				try {
-					const response = await fetch('/.netlify/functions/getComments');
-					const comments = await response.json();
-					console.log('Comments:', comments);
-					displayComments(comments);
-				} catch (error) {
-					console.error('Error loading comments:', error);
-				}
+    			try {
+			        const response = await fetch('/.netlify/functions/getComments');
+			        const comments = await response.json();
+			        console.log('Comments:', comments);
+        			displayComments(comments);
+			    } catch (error) {
+			        console.error('Error loading comments:', error);
+			    }
 			};
 
 			const displayComments = (comments) => {
-				const commentsSection = document.getElementById('comments-section');
-				commentsSection.innerHTML = '';
+			    const commentsSection = document.getElementById('comments-section');
+			    commentsSection.innerHTML = '';
 
-				if (comments.length === 0) {
-					commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
-				} else {
-					commentsSection.innerHTML = comments.map(comment =>
-						`<div class="comment-slide" style="display: inline-block; width: 100%; box-sizing: border-box; padding: 10px;">
-							<strong>${comment.myname}</strong>
-							<br>
-							${comment.comment}
-						</div>`
-					).join('');
+			    if (comments.length === 0) {
+			        commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
+			    } else {
+			        // 각 댓글을 comment-slide 요소로 감싸서 추가
+			        comments.forEach(comment => {
+			            const slide = document.createElement('div');
+			            slide.classList.add('comment-slide');
+			            slide.innerHTML = `
+			                <strong>${comment.myname}</strong><br>
+			                ${comment.comment}
+			            `;
+			            commentsSection.appendChild(slide);
+			        });
 
-					// 슬라이딩이 발생하도록 하기 위해 딜레이를 주어 슬라이딩 애니메이션이 적용되도록 함
-					setTimeout(() => {
-						startSlidingComments();
-					}, 100); // 100ms 정도의 딜레이를 추가하여 CSS가 먼저 반영된 후 슬라이딩 동작이 시작되도록 함
-				}
+			        // 슬라이드 동작 시작
+			        setTimeout(() => {
+			            startSlidingComments();
+			        }, 100);
+			    }
 			};
 
 			const startSlidingComments = () => {
-				const commentsSection = document.getElementById('comments-section');
-				const slides = document.querySelectorAll('.comment-slide');
-				const totalSlides = slides.length;
+			    const commentsSection = document.getElementById('comments-section');
+			    const slides = document.querySelectorAll('.comment-slide');
+			    const totalSlides = slides.length;
 
-				let index = 0;
+			    let index = 0;
 
-				commentInterval = setInterval(() => {
-					index++;
-					if (index < totalSlides) {
-						commentsSection.style.transform = `translateX(-${index * 100}%)`;
-					} else {
-						setTimeout(() => {
-							commentsSection.style.transition = 'none';
-							commentsSection.style.transform = 'translateX(0)';
-							index = 0;
-							setTimeout(() => {
-								commentsSection.style.transition = 'transform 0.5s ease';
-							}, 50);
-						}, 2000);
-					}
-				}, 4000); // 슬라이딩 전환 간격을 4초로 설정
+    			commentInterval = setInterval(() => {
+			        index++;
+			        if (index < totalSlides) {
+			            commentsSection.style.transform = `translateX(-${index * 100}%)`;
+			        } else {
+			            setTimeout(() => {
+			                commentsSection.style.transition = 'none';
+			                commentsSection.style.transform = 'translateX(0)';
+			                index = 0;
+			                setTimeout(() => {
+			                    commentsSection.style.transition = 'transform 0.5s ease';
+			                }, 50);
+			            }, 2000);
+			        }
+			    }, 4000); // 슬라이딩 전환 간격을 4초로 설정
 			};
 
 			const submitComment = async (event) => {
-				event.preventDefault();
-				const myname = document.getElementById('myname').value;
-				const comment = document.getElementById('comment').value;
+    			event.preventDefault();
+			    const myname = document.getElementById('myname').value;
+			    const comment = document.getElementById('comment').value;
 
-				if (!myname || !comment) {
-					alert('Name and comment are required.');
-					return;
-				}
+			    if (!myname || !comment) {
+			        alert('Name and comment are required.');
+			        return;
+			    }
 
-				const response = await fetch('/.netlify/functions/saveComment', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
-				});
+			    const response = await fetch('/.netlify/functions/saveComment', {
+			        method: 'POST',
+			        headers: {
+			            'Content-Type': 'application/json'
+			        },
+			        body: JSON.stringify({ myname, comment })
+			    });
 
-				if (response.ok) {
-					await loadComments();
-					alert('댓글이 성공적으로 저장되었습니다');
-				} else {
-					const result = await response.json();
-					alert(result.message);
-				}
+    			if (response.ok) {
+			        await loadComments();
+			        alert('댓글이 성공적으로 저장되었습니다');
+			    } else {
+			        const result = await response.json();
+			        alert(result.message);
+			    }
 			};
 
 			document.getElementById('commentForm').addEventListener('submit', submitComment);
