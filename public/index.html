@@ -172,11 +172,10 @@
 			let commentInterval;
 
 			const loadComments = async () => {
-    			try {
-			        const response = await fetch('/.netlify/functions/getComments');
+			    try {
+    			    const response = await fetch('/.netlify/functions/getComments');
 			        const comments = await response.json();
-			        console.log('Comments:', comments);
-        			displayComments(comments);
+			        displayComments(comments);
 			    } catch (error) {
 			        console.error('Error loading comments:', error);
 			    }
@@ -196,48 +195,41 @@
 			            </div>`
 			        ).join('');
 
-			        // 슬라이딩이 발생하도록 하기 위해 딜레이를 주어 슬라이딩 애니메이션이 적용되도록 함
-			        setTimeout(() => {
-			            startSlidingComments();
-			        }, 100); // 100ms 정도의 딜레이를 추가하여 CSS가 먼저 반영된 후 슬라이딩 동작이 시작되도록 함
+			        startSlidingComments(comments.length);
 			    }
 			};
 
-			const startSlidingComments = () => {
+			const startSlidingComments = (totalSlides) => {
 			    const commentsSection = document.getElementById('comments-section');
 			    const slides = document.querySelectorAll('.comment-slide');
-			    const totalSlides = slides.length;
+			    const totalSlidesCount = slides.length;
 
-			    let index = 0;
-
-    			commentInterval = setInterval(() => {
-			        index++;
-			        if (index < totalSlides) {
-			            commentsSection.style.transform = `translateX(-${index * 100}%)`;
-			        } else {
+			    commentInterval = setInterval(() => {
+			        currentIndex++;
+			        if (currentIndex >= totalSlidesCount) {
+			            currentIndex = 0; // 무한 루프를 위해 처음으로 돌아감
+			            commentsSection.style.transition = 'none'; // 애니메이션 없이 초기 위치로 설정
+			            commentsSection.style.transform = `translateY(0)`;
 			            setTimeout(() => {
-			                commentsSection.style.transition = 'none';
-			                commentsSection.style.transform = 'translateX(0)';
-			                index = 0;
-			                setTimeout(() => {
-			                    commentsSection.style.transition = 'transform 0.5s ease';
-			                }, 50);
-			            }, 2000);
+			                commentsSection.style.transition = 'transform 0.5s ease'; // 애니메이션 재설정
+			            }, 50);
+			        } else {
+			            commentsSection.style.transform = `translateY(-${currentIndex * 150}px)`; // 슬라이드 높이에 맞춰 이동
 			        }
-			    }, 4000); // 슬라이딩 전환 간격을 4초로 설정
+			    }, 3000); // 3초마다 슬라이드 전환
 			};
 
 			const submitComment = async (event) => {
-    			event.preventDefault();
+			    event.preventDefault();
 			    const myname = document.getElementById('myname').value;
 			    const comment = document.getElementById('comment').value;
 
-			    if (!myname || !comment) {
+    			if (!myname || !comment) {
 			        alert('Name and comment are required.');
 			        return;
 			    }
 
-			    const response = await fetch('/.netlify/functions/saveComment', {
+    			const response = await fetch('/.netlify/functions/saveComment', {
 			        method: 'POST',
 			        headers: {
 			            'Content-Type': 'application/json'
