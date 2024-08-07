@@ -1818,7 +1818,6 @@ input, select, textarea {
 		}
 
 /* Comments */
-/* 댓글 슬라이딩 애니메이션을 위한 CSS */
 #comments-section {
     position: relative;
     height: 150px; /* 각 슬라이드의 높이를 적절히 설정 */
@@ -1842,12 +1841,13 @@ input, select, textarea {
     background-color: #ffffff;
     text-align: center; /* 텍스트 가운데 정렬 */
     opacity: 0; /* 처음에는 보이지 않도록 설정 */
+    transform: translateX(100%); /* 모든 슬라이드가 오른쪽에 배치되도록 설정 */
     transition: opacity 0.5s ease, transform 0.5s ease; /* 부드러운 전환을 위한 설정 */
 }
 
 .comment-slide.active {
     opacity: 1; /* 활성화된 슬라이드는 보이도록 설정 */
-    transform: translateX(0); /* 활성화된 슬라이드를 제자리로 */
+    transform: translateX(0); /* 활성화된 슬라이드를 왼쪽으로 이동 */
 }
 
 .comment-slide.inactive {
