@@ -225,7 +225,7 @@
 							}, 50);
 						}, 2000);
 					}
-				}, 2000);
+				}, 4000); // 슬라이딩 전환 간격을 4초로 설정
 			};
 
 			const submitComment = async (event) => {
@@ -258,6 +258,5 @@
 			document.getElementById('commentForm').addEventListener('submit', submitComment);
 			window.onload = loadComments;
 		</script>
-
 	</body>
 </html>
