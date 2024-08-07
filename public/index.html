@@ -186,24 +186,20 @@
 			    const commentsSection = document.getElementById('comments-section');
 			    commentsSection.innerHTML = '';
 
-			    if (comments.length === 0) {
+    			if (comments.length === 0) {
 			        commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
 			    } else {
-			        // 각 댓글을 comment-slide 요소로 감싸서 추가
-			        comments.forEach(comment => {
-			            const slide = document.createElement('div');
-			            slide.classList.add('comment-slide');
-			            slide.innerHTML = `
-			                <strong>${comment.myname}</strong><br>
-			                ${comment.comment}
-			            `;
-			            commentsSection.appendChild(slide);
-			        });
+			        commentsSection.innerHTML = comments.map(comment =>
+			            `<div class="comment-slide">
+			                <strong>${comment.myname}</strong>
+			                <p>${comment.comment}</p>
+			            </div>`
+			        ).join('');
 
-			        // 슬라이드 동작 시작
+			        // 슬라이딩이 발생하도록 하기 위해 딜레이를 주어 슬라이딩 애니메이션이 적용되도록 함
 			        setTimeout(() => {
 			            startSlidingComments();
-			        }, 100);
+			        }, 100); // 100ms 정도의 딜레이를 추가하여 CSS가 먼저 반영된 후 슬라이딩 동작이 시작되도록 함
 			    }
 			};
 
