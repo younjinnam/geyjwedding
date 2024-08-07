@@ -1841,16 +1841,18 @@ input, select, textarea {
     border-radius: 10px;
     background-color: #ffffff;
     text-align: center; /* 텍스트 가운데 정렬 */
+    opacity: 0; /* 처음에는 보이지 않도록 설정 */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* 부드러운 전환을 위한 설정 */
 }
 
-.comment-slide strong {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
+.comment-slide.active {
+    opacity: 1; /* 활성화된 슬라이드는 보이도록 설정 */
+    transform: translateX(0); /* 활성화된 슬라이드를 제자리로 */
 }
 
-.comment-slide p {
-    margin: 0;
+.comment-slide.inactive {
+    opacity: 0; /* 비활성화된 슬라이드는 보이지 않도록 설정 */
+    transform: translateX(-100%); /* 비활성화된 슬라이드를 왼쪽으로 이동 */
 }
 
 /* 댓글 섹션 컨테이너 */
