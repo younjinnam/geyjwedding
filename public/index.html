@@ -173,8 +173,9 @@
 
 			const loadComments = async () => {
 			    try {
-    			    const response = await fetch('/.netlify/functions/getComments');
+			        const response = await fetch('/.netlify/functions/getComments');
 			        const comments = await response.json();
+			        console.log('Comments:', comments);
 			        displayComments(comments);
 			    } catch (error) {
 			        console.error('Error loading comments:', error);
@@ -201,20 +202,21 @@
 
 			const startSlidingComments = (totalSlides) => {
 			    const commentsSection = document.getElementById('comments-section');
-			    const slides = document.querySelectorAll('.comment-slide');
-			    const totalSlidesCount = slides.length;
 
-			    commentInterval = setInterval(() => {
+    			commentInterval = setInterval(() => {
 			        currentIndex++;
-			        if (currentIndex >= totalSlidesCount) {
-			            currentIndex = 0; // 무한 루프를 위해 처음으로 돌아감
-			            commentsSection.style.transition = 'none'; // 애니메이션 없이 초기 위치로 설정
-			            commentsSection.style.transform = `translateY(0)`;
-			            setTimeout(() => {
-			                commentsSection.style.transition = 'transform 0.5s ease'; // 애니메이션 재설정
-			            }, 50);
+			        if (currentIndex < totalSlides) {
+			            commentsSection.style.transform = `translateX(-${currentIndex * 100}%)`;
 			        } else {
-			            commentsSection.style.transform = `translateY(-${currentIndex * 150}px)`; // 슬라이드 높이에 맞춰 이동
+			            // 마지막 슬라이드에서 첫 슬라이드로 돌아가기
+			            setTimeout(() => {
+			                commentsSection.style.transition = 'none';
+			                commentsSection.style.transform = 'translateX(0)';
+			                currentIndex = 0;
+			                setTimeout(() => {
+			                    commentsSection.style.transition = 'transform 0.5s ease';
+			                }, 50);
+			            }, 2000);
 			        }
 			    }, 3000); // 3초마다 슬라이드 전환
 			};
@@ -224,20 +226,20 @@
 			    const myname = document.getElementById('myname').value;
 			    const comment = document.getElementById('comment').value;
 
-    			if (!myname || !comment) {
+			    if (!myname || !comment) {
 			        alert('Name and comment are required.');
 			        return;
 			    }
 
-    			const response = await fetch('/.netlify/functions/saveComment', {
+			    const response = await fetch('/.netlify/functions/saveComment', {
 			        method: 'POST',
 			        headers: {
 			            'Content-Type': 'application/json'
 			        },
-			        body: JSON.stringify({ myname, comment })
+			        body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
 			    });
 
-    			if (response.ok) {
+			    if (response.ok) {
 			        await loadComments();
 			        alert('댓글이 성공적으로 저장되었습니다');
 			    } else {
