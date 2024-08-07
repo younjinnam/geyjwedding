@@ -1817,49 +1817,56 @@ input, select, textarea {
 
 		}
 
-
-/* Comments */
 /* Comments */
 /* 댓글 슬라이딩 애니메이션을 위한 CSS */
 #comments-section {
     position: relative;
-    height: 100px; /* 높이를 댓글의 내용에 맞게 조정 */
+    height: 150px; /* 슬라이드 하나의 높이만큼 설정 */
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     transition: transform 0.5s ease;
     justify-content: flex-start;
-    align-items: center;
-    text-align: left; /* 텍스트를 왼쪽 정렬 */
-    white-space: nowrap; /* 한 줄로 유지 */
+    align-items: flex-start;
+    text-align: center; /* 텍스트 가운데 정렬 */
+    white-space: normal;
 }
 
 .comment-slide {
-    min-width: 100%; /* 슬라이드가 전체 너비를 차지하도록 설정 */
+    width: 100%;
     box-sizing: border-box;
     font-size: 1.2em;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 2px solid #98c593;
+    border-radius: 10px;
+    background-color: #ffffff;
 }
 
 .comment-slide strong {
-    display: block; /* 이름을 독립된 줄에 표시 */
+    display: block;
     font-weight: bold;
-    margin-bottom: 5px; /* 이름과 댓글 사이의 간격 */
+    margin-bottom: 5px;
+    text-align: center; /* 이름 가운데 정렬 */
 }
 
 .comment-slide p {
     margin: 0;
-    display: block; /* 댓글을 독립된 줄에 표시 */
+    display: block;
+    text-align: center; /* 댓글 텍스트 가운데 정렬 */
 }
 
-/* 댓글 섹션 컨테이너에 테두리 추가 및 Comment 문구와 간격 설정 */
+/* 댓글 섹션 컨테이너 */
 #comments-section-container {
-    border: 2px solid #98c593; /* 테두리 설정 */
     padding: 10px;
     overflow: hidden;
-    margin-bottom: 20px; /* 댓글창과 Comment 문구 사이의 간격 */
-    background-color: #f5f6f7; /* 컨테이너 배경색 */
+    margin-bottom: 20px;
+    background-color: #f5f6f7;
 }
-
 
 /* MAP*/
 /* 카카오 지도 */
