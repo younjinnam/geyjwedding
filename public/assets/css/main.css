@@ -1821,15 +1821,15 @@ input, select, textarea {
 /* 댓글 슬라이딩 애니메이션을 위한 CSS */
 #comments-section {
     position: relative;
-    width: 100%;
-    height: 150px; /* 슬라이드 하나의 높이만큼 설정 */
+    height: 150px; /* 각 슬라이드의 높이를 적절히 설정 */
     overflow: hidden;
     display: flex;
-    transition: transform 0.5s ease;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .comment-slide {
-    min-width: 100%;
+    min-width: 100%; /* 슬라이드가 부모의 너비를 모두 차지하도록 설정 */
     box-sizing: border-box;
     font-size: 1.2em;
     display: flex;
@@ -1853,14 +1853,6 @@ input, select, textarea {
 .comment-slide.inactive {
     opacity: 0; /* 비활성화된 슬라이드는 보이지 않도록 설정 */
     transform: translateX(-100%); /* 비활성화된 슬라이드를 왼쪽으로 이동 */
-}
-
-/* 댓글 섹션 컨테이너 */
-#comments-section-container {
-    padding: 10px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    background-color: #f5f6f7;
 }
 
 /* MAP*/
