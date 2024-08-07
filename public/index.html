@@ -201,24 +201,18 @@
 			};
 
 			const startSlidingComments = (totalSlides) => {
-			    const commentsSection = document.getElementById('comments-section');
+			    const slides = document.querySelectorAll('.comment-slide');
+			    slides[currentIndex].classList.add('active');
 
     			commentInterval = setInterval(() => {
-			        currentIndex++;
-			        if (currentIndex < totalSlides) {
-			            commentsSection.style.transform = `translateX(-${currentIndex * 100}%)`;
-			        } else {
-			            // 마지막 슬라이드에서 첫 슬라이드로 돌아가기
-			            setTimeout(() => {
-			                commentsSection.style.transition = 'none';
-			                commentsSection.style.transform = 'translateX(0)';
-			                currentIndex = 0;
-			                setTimeout(() => {
-			                    commentsSection.style.transition = 'transform 0.5s ease';
-			                }, 50);
-			            }, 2000);
-			        }
-			    }, 3000); // 3초마다 슬라이드 전환
+			        slides[currentIndex].classList.remove('active');
+			        slides[currentIndex].classList.add('inactive');
+
+    			    currentIndex = (currentIndex + 1) % totalSlides;
+
+			        slides[currentIndex].classList.remove('inactive');
+			        slides[currentIndex].classList.add('active');
+			    }, 2000);
 			};
 
 			const submitComment = async (event) => {
