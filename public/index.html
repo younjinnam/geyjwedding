@@ -200,19 +200,33 @@
 			    }
 			};
 
-			const startSlidingComments = (totalSlides) => {
+			const startSlidingComments = () => {
+			    const commentsSection = document.getElementById('comments-section');
 			    const slides = document.querySelectorAll('.comment-slide');
-			    slides[currentIndex].classList.add('active');
+			    const totalSlides = slides.length;
 
-    			commentInterval = setInterval(() => {
-			        slides[currentIndex].classList.remove('active');
-			        slides[currentIndex].classList.add('inactive');
+    			let index = 0;
 
-    			    currentIndex = (currentIndex + 1) % totalSlides;
+			    setInterval(() => {
+			        // 모든 슬라이드 비활성화
+			        slides.forEach((slide, i) => {
+			            slide.classList.remove('active');
+			            slide.classList.add('inactive');
+			            slide.style.transform = `translateX(${100}%)`;
+			        });
 
-			        slides[currentIndex].classList.remove('inactive');
-			        slides[currentIndex].classList.add('active');
-			    }, 2000);
+			        // 현재 슬라이드를 활성화
+			        slides[index].classList.add('active');
+			        slides[index].classList.remove('inactive');
+			        slides[index].style.transform = `translateX(0)`;
+
+			        // 이전 슬라이드를 왼쪽으로 이동
+			        const previousIndex = index === 0 ? totalSlides - 1 : index - 1;
+			        slides[previousIndex].style.transform = `translateX(-100%)`;
+
+			        // 다음 슬라이드로 이동
+			        index = (index + 1) % totalSlides;
+			    }, 2000); // 슬라이드 전환 간격 (2초)
 			};
 
 			const submitComment = async (event) => {
