@@ -204,4 +204,106 @@
             $window.trigger('resize');
         });
 
+    // Comment sliding and loading functionality
+    let comments = [];
+    let currentPage = 1;
+    const commentsPerPage = 10;
+
+    const loadComments = async () => {
+        try {
+            const response = await fetch('/.netlify/functions/getComments');
+            comments = await response.json();
+            console.log('Comments:', comments);
+            displayComments(); // 처음 10개 표시
+        } catch (error) {
+            console.error('Error loading comments:', error);
+        }
+    };
+
+    const displayComments = () => {
+        const commentsList = document.getElementById('comments-list');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const start = (currentPage - 1) * commentsPerPage;
+        const end = start + commentsPerPage;
+        const paginatedComments = comments.slice(start, end);
+
+        paginatedComments.forEach(comment => {
+            const commentElement = document.createElement('p');
+            commentElement.innerHTML = `<strong>${comment.myname}:</strong> ${comment.comment}`;
+            commentsList.appendChild(commentElement);
+        });
+
+        currentPage++;
+
+        // 더보기 버튼 상태 업데이트
+        if (end >= comments.length) {
+            loadMoreBtn.style.display = 'none'; // 모든 댓글이 표시되면 더보기 버튼 숨기기
+        } else if (comments.length <= commentsPerPage) {
+            loadMoreBtn.style.display = 'none'; // 초기 댓글 수가 10개 이하인 경우도 더보기 버튼 숨기기
+        } else {
+            loadMoreBtn.style.display = 'block'; // 댓글이 더 많다면 더보기 버튼 표시
+        }
+    };
+
+    document.getElementById('loadMoreBtn').addEventListener('click', displayComments);
+
+    const submitComment = async (event) => {
+        event.preventDefault();
+        const myname = document.getElementById('myname').value;
+        const comment = document.getElementById('comment').value;
+
+        if (!myname || !comment) {
+            alert('Name and comment are required.');
+            return;
+        }
+
+        const response = await fetch('/.netlify/functions/saveComment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
+        });
+
+        if (response.ok) {
+            await loadComments();
+            if (window.confirm('댓글이 성공적으로 저장되었습니다.')) {
+                window.location.reload();
+            }
+        } else {
+            const result = await response.json();
+            alert(result.message);
+        }
+    };
+
+    document.getElementById('commentForm').addEventListener('submit', submitComment);
+    window.onload = loadComments;
+
+    // 주소 복사 기능
+    document.getElementById('copyTextBtn').addEventListener('click', function() {
+        // 미리 입력해둔 텍스트
+        const textToCopy = "서울특별시 강남구 언주로 711 건설회관 2층";
+
+        // 클립보드에 복사하기
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('텍스트가 복사되었습니다!');
+        }).catch(err => {
+            console.error('텍스트 복사에 실패했습니다:', err);
+            alert('텍스트 복사에 실패했습니다.');
+        });
+    });
+    // 댓글 토글 기능
+    document.getElementById('toggleCommentsBtn').addEventListener('click', function() {
+        const allComments = document.getElementById('all-comments');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        if (allComments.style.display === 'none' || allComments.style.display === '') {
+            allComments.style.display = 'block';
+            toggleIcon.className = 'fas fa-chevron-up'; // 아이콘 변경
+        } else {
+            allComments.style.display = 'none';
+            toggleIcon.className = 'fas fa-chevron-down'; // 아이콘 변경
+        }
+    });
+
 })(jQuery);
