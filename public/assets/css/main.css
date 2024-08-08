@@ -1465,7 +1465,6 @@ input, select, textarea {
 		margin: 0;
 		overflow-x: hidden;
         height: auto; /* 높이를 콘텐츠에 맞게 자동 조정 */
-        overflow: visible; /* 오버플로우가 발생하지 않도록 설정 */
 	}
 
 		.main > .content {
