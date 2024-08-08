@@ -1876,6 +1876,7 @@ input, select, textarea {
     margin-bottom: 0.5em;
     padding: 0.5em;
     border-bottom: 1px solid #ddd;
+    text-align: left; /* 왼쪽 정렬 */
 }
 
 /* 전체 댓글*/
