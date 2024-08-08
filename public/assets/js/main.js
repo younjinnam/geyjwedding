@@ -178,7 +178,9 @@
         if (!scrollTimeout) {
             scrollTimeout = requestAnimationFrame(function() {
                 $('.animate-on-scroll').each(function() {
-                    if ($(this).offset().top < $(window).scrollTop() + $(window).height() * 0.9) {
+                    const elementTop = $(this).offset().top;
+                    const viewportBottom = $(window).scrollTop() + $(window).height();
+                    if (elementTop < viewportBottom * 0.9) {
                         $(this).addClass('animate');
                     }
                 });
