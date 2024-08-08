@@ -187,7 +187,7 @@
 
                 // Update scrolly links.
                 $('a[href^="#"]').scrolly({
-                    speed: 1500,
+                    speed: 1000,
                     offset: $header.outerHeight() - 1
                 });
 
@@ -306,7 +306,7 @@ const startSlidingComments = () => {
 
         if (allComments.style.display === 'none' || allComments.style.display === '') {
             allComments.style.display = 'block';
-            toggleIcon.classList.remove('fa-chevron-down');
+            toggleIcon.classList.remove('fa-chevron-down');Q
             toggleIcon.classList.add('fa-chevron-up');
         } else {
             allComments.style.display = 'none';
