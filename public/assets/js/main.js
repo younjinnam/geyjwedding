@@ -103,70 +103,68 @@
 
     });
 
-    // Section transitions.
+    // Section transitions using IntersectionObserver
     if (browser.canUse('transition')) {
 
         var on = function() {
 
-            // Galleries.
-            $('.gallery')
-                .scrollex({
-                    top: '20vh',  // 모바일에서 더 적은 영역으로 설정
-                    bottom: '20vh',
-                    delay: 100, // 지연 시간 조정
-                    initialize: function() { $(this).addClass('inactive'); },
-                    terminate: function() { $(this).removeClass('inactive'); },
-                    enter: function() { $(this).removeClass('inactive'); },
-                    leave: function() { $(this).addClass('inactive'); }
+            // Galleries (use IntersectionObserver for better performance)
+            $('.gallery').each(function() {
+                var $this = $(this);
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            $this.removeClass('inactive');
+                        } else {
+                            $this.addClass('inactive');
+                        }
+                    });
+                }, {
+                    threshold: 0.1
                 });
+                observer.observe(this);
+            });
 
-            // Generic sections.
-            $('.main.style1')
-                .scrollex({
-                    mode: 'middle',
-                    delay: 100,
-                    initialize: function() { $(this).addClass('inactive'); },
-                    terminate: function() { $(this).removeClass('inactive'); },
-                    enter: function() { $(this).removeClass('inactive'); },
-                    leave: function() { $(this).addClass('inactive'); }
+            // Generic sections
+            $('.main.style1, .main.style2').each(function() {
+                var $this = $(this);
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            $this.removeClass('inactive');
+                        } else {
+                            $this.addClass('inactive');
+                        }
+                    });
+                }, {
+                    threshold: 0.1
                 });
+                observer.observe(this);
+            });
 
-            $('.main.style2')
-                .scrollex({
-                    mode: 'middle',
-                    delay: 100,
-                    initialize: function() { $(this).addClass('inactive'); },
-                    terminate: function() { $(this).removeClass('inactive'); },
-                    enter: function() { $(this).removeClass('inactive'); },
-                    leave: function() { $(this).addClass('inactive'); }
+            // Contact
+            $('#contact').each(function() {
+                var $this = $(this);
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            $this.removeClass('inactive');
+                        } else {
+                            $this.addClass('inactive');
+                        }
+                    });
+                }, {
+                    threshold: 0.1
                 });
-
-            // Contact.
-            $('#contact')
-                .scrollex({
-                    top: '50%',
-                    delay: 50,
-                    initialize: function() { $(this).addClass('inactive'); },
-                    terminate: function() { $(this).removeClass('inactive'); },
-                    enter: function() { $(this).removeClass('inactive'); },
-                    leave: function() { $(this).addClass('inactive'); }
-                });
+                observer.observe(this);
+            });
 
         };
 
         var off = function() {
-            // Galleries.
-            $('.gallery').unscrollex();
-
-            // Generic sections.
-            $('.main.style1').unscrollex();
-            $('.main.style2').unscrollex();
-
-            // Contact.
-            $('#contact').unscrollex();
+            // No need to unobserve, IntersectionObserver handles it
         };
 
-        // 모바일에서도 애니메이션 유지
         breakpoints.on('<=small', on);
         breakpoints.on('>small', on);
 
@@ -221,67 +219,67 @@
             $window.trigger('resize');
         });
 
-// 슬라이드 댓글 기능
-let currentIndex = 0;
-let commentInterval;
+    // 슬라이드 댓글 기능
+    let currentIndex = 0;
+    let commentInterval;
 
-const loadComments = async () => {
-    try {
-        const response = await fetch('/.netlify/functions/getComments');
-        const comments = await response.json();
-        console.log('Comments:', comments);
-        displaySlideComments(comments);
-        displayAllComments(comments); // 전체 댓글 표시 기능도 동시에 로드
-    } catch (error) {
-        console.error('Error loading comments:', error);
-    }
-};
+    const loadComments = async () => {
+        try {
+            const response = await fetch('/.netlify/functions/getComments');
+            const comments = await response.json();
+            console.log('Comments:', comments);
+            displaySlideComments(comments);
+            displayAllComments(comments); // 전체 댓글 표시 기능도 동시에 로드
+        } catch (error) {
+            console.error('Error loading comments:', error);
+        }
+    };
 
-const displaySlideComments = (comments) => {
-    const commentsSection = document.getElementById('comments-section');
-    commentsSection.innerHTML = '';
+    const displaySlideComments = (comments) => {
+        const commentsSection = document.getElementById('comments-section');
+        commentsSection.innerHTML = '';
 
-    if (comments.length === 0) {
-        commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
-    } else {
-        commentsSection.innerHTML = comments.map(comment =>
-            `<div class="comment-slide">
-                <strong>${comment.myname}</strong>
-                <p>${comment.comment}</p>
-            </div>`
-        ).join('');
+        if (comments.length === 0) {
+            commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
+        } else {
+            commentsSection.innerHTML = comments.map(comment =>
+                `<div class="comment-slide">
+                    <strong>${comment.myname}</strong>
+                    <p>${comment.comment}</p>
+                </div>`
+            ).join('');
 
-        startSlidingComments(comments.length);
-    }
-};
+            startSlidingComments(comments.length);
+        }
+    };
 
-const startSlidingComments = () => {
-    const slides = document.querySelectorAll('.comment-slide');
-    const totalSlides = slides.length;
+    const startSlidingComments = () => {
+        const slides = document.querySelectorAll('.comment-slide');
+        const totalSlides = slides.length;
 
-    let index = 0;
+        let index = 0;
 
-    setInterval(() => {
-        // 모든 슬라이드 비활성화
-        slides.forEach((slide) => {
-            slide.classList.remove('active');
-            slide.classList.add('inactive');
-            slide.style.transform = `translateX(${100}%)`;
-        });
+        setInterval(() => {
+            // 모든 슬라이드 비활성화
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+                slide.classList.add('inactive');
+                slide.style.transform = `translateX(${100}%)`;
+            });
 
-        // 현재 슬라이드를 활성화
-        slides[index].classList.add('active');
-        slides[index].classList.remove('inactive');
-        slides[index].style.transform = `translateX(0)`;
+            // 현재 슬라이드를 활성화
+            slides[index].classList.add('active');
+            slides[index].classList.remove('inactive');
+            slides[index].style.transform = `translateX(0)`;
 
-        // 이전 슬라이드를 왼쪽으로 이동
-        const previousIndex = index === 0 ? totalSlides - 1 : index - 1;
-        slides[previousIndex].style.transform = `translateX(-100%)`;
+            // 이전 슬라이드를 왼쪽으로 이동
+            const previousIndex = index === 0 ? totalSlides - 1 : index - 1;
+            slides[previousIndex].style.transform = `translateX(-100%)`;
 
-        // 다음 슬라이드로 이동
-        index = (index + 1) % totalSlides;
-    }, 2000); // 슬라이드 전환 간격 (2초)
-};
+            // 다음 슬라이드로 이동
+            index = (index + 1) % totalSlides;
+        }, 2000); // 슬라이드 전환 간격 (2초)
+    };
 
     // 전체 댓글 보기 기능
     const displayAllComments = (comments) => {
