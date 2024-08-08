@@ -204,80 +204,119 @@
             $window.trigger('resize');
         });
 
-    // Comment sliding and loading functionality
-    let comments = [];
-    let currentPage = 1;
-    const commentsPerPage = 10;
+// 슬라이드 댓글 기능
+let currentIndex = 0;
+let commentInterval;
 
-    const loadComments = async () => {
-        try {
-            const response = await fetch('/.netlify/functions/getComments');
-            comments = await response.json();
-            console.log('Comments:', comments);
-            displayComments(); // 처음 10개 표시
-        } catch (error) {
-            console.error('Error loading comments:', error);
-        }
-    };
+const loadComments = async () => {
+    try {
+        const response = await fetch('/.netlify/functions/getComments');
+        const comments = await response.json();
+        console.log('Comments:', comments);
+        displaySlideComments(comments);
+        displayAllComments(comments); // 전체 댓글 표시 기능도 동시에 로드
+    } catch (error) {
+        console.error('Error loading comments:', error);
+    }
+};
 
-    const displayComments = () => {
+const displaySlideComments = (comments) => {
+    const commentsSection = document.getElementById('comments-section');
+    commentsSection.innerHTML = '';
+
+    if (comments.length === 0) {
+        commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
+    } else {
+        commentsSection.innerHTML = comments.map(comment =>
+            `<div class="comment-slide">
+                <strong>${comment.myname}</strong>
+                <p>${comment.comment}</p>
+            </div>`
+        ).join('');
+
+        startSlidingComments(comments.length);
+    }
+};
+
+const startSlidingComments = () => {
+    const slides = document.querySelectorAll('.comment-slide');
+    const totalSlides = slides.length;
+
+    let index = 0;
+
+    setInterval(() => {
+        // 모든 슬라이드 비활성화
+        slides.forEach((slide) => {
+            slide.classList.remove('active');
+            slide.classList.add('inactive');
+            slide.style.transform = `translateX(${100}%)`;
+        });
+
+        // 현재 슬라이드를 활성화
+        slides[index].classList.add('active');
+        slides[index].classList.remove('inactive');
+        slides[index].style.transform = `translateX(0)`;
+
+        // 이전 슬라이드를 왼쪽으로 이동
+        const previousIndex = index === 0 ? totalSlides - 1 : index - 1;
+        slides[previousIndex].style.transform = `translateX(-100%)`;
+
+        // 다음 슬라이드로 이동
+        index = (index + 1) % totalSlides;
+    }, 2000); // 슬라이드 전환 간격 (2초)
+};
+
+    // 전체 댓글 보기 기능
+    const displayAllComments = (comments) => {
         const commentsList = document.getElementById('comments-list');
         const loadMoreBtn = document.getElementById('loadMoreBtn');
-        const start = (currentPage - 1) * commentsPerPage;
-        const end = start + commentsPerPage;
-        const paginatedComments = comments.slice(start, end);
+        const commentsPerPage = 10;
+        let currentPage = 1;
 
-        paginatedComments.forEach(comment => {
-            const commentElement = document.createElement('p');
-            commentElement.innerHTML = `<strong>${comment.myname}:</strong> ${comment.comment}`;
-            commentsList.appendChild(commentElement);
-        });
+        const renderComments = () => {
+            const start = (currentPage - 1) * commentsPerPage;
+            const end = start + commentsPerPage;
+            const paginatedComments = comments.slice(start, end);
 
-        currentPage++;
+            paginatedComments.forEach(comment => {
+                const commentElement = document.createElement('p');
+                commentElement.innerHTML = `<strong>${comment.myname}:</strong> ${comment.comment}`;
+                commentsList.appendChild(commentElement);
+            });
 
-        // 더보기 버튼 상태 업데이트
-        if (end >= comments.length) {
-            loadMoreBtn.style.display = 'none'; // 모든 댓글이 표시되면 더보기 버튼 숨기기
-        } else if (comments.length <= commentsPerPage) {
-            loadMoreBtn.style.display = 'none'; // 초기 댓글 수가 10개 이하인 경우도 더보기 버튼 숨기기
-        } else {
-            loadMoreBtn.style.display = 'block'; // 댓글이 더 많다면 더보기 버튼 표시
-        }
-    };
-
-    document.getElementById('loadMoreBtn').addEventListener('click', displayComments);
-
-    const submitComment = async (event) => {
-        event.preventDefault();
-        const myname = document.getElementById('myname').value;
-        const comment = document.getElementById('comment').value;
-
-        if (!myname || !comment) {
-            alert('Name and comment are required.');
-            return;
-        }
-
-        const response = await fetch('/.netlify/functions/saveComment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
-        });
-
-        if (response.ok) {
-            await loadComments();
-            if (window.confirm('댓글이 성공적으로 저장되었습니다.')) {
-                window.location.reload();
+            if (end >= comments.length) {
+                loadMoreBtn.style.display = 'none'; // 모든 댓글이 표시되면 더보기 버튼 숨기기
+            } else {
+                loadMoreBtn.style.display = 'block'; // 댓글이 더 많다면 더보기 버튼 표시
             }
-        } else {
-            const result = await response.json();
-            alert(result.message);
-        }
+        };
+
+        loadMoreBtn.addEventListener('click', () => {
+            currentPage++;
+            renderComments();
+        });
+
+        renderComments(); // 처음 10개 표시
     };
 
-    document.getElementById('commentForm').addEventListener('submit', submitComment);
+    // 전체 댓글 보기 토글 기능
+    document.getElementById('toggleCommentsBtn').addEventListener('click', function() {
+        const allComments = document.getElementById('all-comments');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        if (allComments.style.display === 'none' || allComments.style.display === '') {
+            allComments.style.display = 'block';
+            toggleIcon.classList.remove('fa-chevron-down');
+            toggleIcon.classList.add('fa-chevron-up');
+        } else {
+            allComments.style.display = 'none';
+            toggleIcon.classList.remove('fa-chevron-up');
+            toggleIcon.classList.add('fa-chevron-down');
+        }
+    });
+
     window.onload = loadComments;
+
 
     // 주소 복사 기능
     document.getElementById('copyTextBtn').addEventListener('click', function() {
@@ -291,19 +330,6 @@
             console.error('텍스트 복사에 실패했습니다:', err);
             alert('텍스트 복사에 실패했습니다.');
         });
-    });
-    // 댓글 토글 기능
-    document.getElementById('toggleCommentsBtn').addEventListener('click', function() {
-        const allComments = document.getElementById('all-comments');
-        const toggleIcon = document.getElementById('toggleIcon');
-
-        if (allComments.style.display === 'none' || allComments.style.display === '') {
-            allComments.style.display = 'block';
-            toggleIcon.className = 'fas fa-chevron-up'; // 아이콘 변경
-        } else {
-            allComments.style.display = 'none';
-            toggleIcon.className = 'fas fa-chevron-down'; // 아이콘 변경
-        }
     });
 
 })(jQuery);
