@@ -6,6 +6,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
 	<body class="is-preload">
@@ -94,20 +95,35 @@
 		</section>
 
 		<!-- Three -->
-		<section id="three" class="main style4 dark fullscreen">
-			<div class="content box style2">
+		<section id="three" class="main style3 primary">
+			<div class="content">
 				<header>
 					<h2>오시는 길</h2>
+					<p>서울특별시 강남구 언주로 711 건설회관 2층</p>
+					<button id="copyTextBtn">주소 복사</button>
 				</header>
+				<!-- 1. 지도 노드 -->
+				<div class="map-info-container">
+					<!-- 지도 컨테이너 -->
+					<div id="mapWrapper" class="map-container">
+						<div id="daumRoughmapContainer1721881645796" class="root_daum_roughmap root_daum_roughmap_landing"></div>
+						<button id="lockMapBtn" style="position: absolute; top: 10px; left: 10px; background: none; border: none; cursor: pointer;">
+							<i id="lockIcon" class="fas fa-lock"></i>
+						</button>
+					</div>
+					<!-- 설명 박스 -->
+					<div class="info-box">
+						<h3>추가 정보</h3>
+						<p>오시는 길 안내: 강남역 3번 출구에서 도보 10분 거리</p>
+						<p>주차 안내: 건물 내 주차장 이용 가능</p>
+					</div>
+				</div>
 			</div>
-			<!-- 1. 지도 노드 -->
-			<div id="mapWrapper" class="map-container">
-				<div id="daumRoughmapContainer1721881645796" class="root_daum_roughmap root_daum_roughmap_landing"></div>
-			</div>
+
 		</section>
 
 		<!-- 축하메세지 -->
-		<section id="contact" class="main style3 secondary">
+		<section id="contact" class="main style3 primary">
 			<div class="content">
 				<div id="comments-section-container">
 					<div id="comments-section" class="comments-slider">
@@ -131,7 +147,22 @@
 							<li><input type="submit" value="Send Message" /></li>
 						</ul>
 					</form>
-				</div>
+					<div id="all-comments-container" class="box">
+						<div style="display: flex; justify-content: space-between; align-items: center;">
+							<h3 style="margin: 0;">전체 댓글 보기</h3>
+							<button id="toggleCommentsBtn" style="background: none; border: none; cursor: pointer;">
+								<i id="toggleIcon" class="fas fa-chevron-down"></i>
+							</button>
+						</div>
+						<div id="all-comments" style="display: none;">
+							<div id="comments-list">
+								<!-- 전체 댓글 리스트가 여기 표시됩니다 -->
+							</div>
+							<div id="loadMoreContainer">
+								<button id="loadMoreBtn">더보기</button>
+							</div>
+						</div>
+					</div>
 			</div>
 		</section>
 
@@ -146,8 +177,6 @@
 				</ul>
 			</footer>
 
-
-
 		<!-- Scripts -->
 		<script src="assets/js/jquery.min.js"></script>
 		<script src="assets/js/jquery.poptrox.min.js"></script>
@@ -157,109 +186,37 @@
 		<script src="assets/js/breakpoints.min.js"></script>
 		<script src="assets/js/util.js"></script>
 		<script src="assets/js/main.js"></script>
+
 		<!-- 카카오 지도 스크립트 -->
 		<script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
 		<script charset="UTF-8">
+			// 카카오 지도 초기화
 			new daum.roughmap.Lander({
-				"timestamp" : "1721881645796",
-				"key" : "2k69x"
+				"timestamp": "1721881645796",
+				"key": "2k69x"
 			}).render();
-		</script>
 
-		<!-- DB 댓글 연동 및 슬라이딩 기능을 위한 스크립트 -->
-		<script>
-			let currentIndex = 0;
-			let commentInterval;
+			// 맵 컨트롤 기능
+			var isLocked = true;
 
-			const loadComments = async () => {
-			    try {
-			        const response = await fetch('/.netlify/functions/getComments');
-			        const comments = await response.json();
-			        console.log('Comments:', comments);
-			        displayComments(comments);
-			    } catch (error) {
-			        console.error('Error loading comments:', error);
-			    }
-			};
-
-			const displayComments = (comments) => {
-			    const commentsSection = document.getElementById('comments-section');
-			    commentsSection.innerHTML = '';
-
-			    if (comments.length === 0) {
-			        commentsSection.innerHTML = '<p>작성된 댓글이 없습니다. 축하메세지를 남겨주세요!</p>';
-			    } else {
-			        commentsSection.innerHTML = comments.map(comment =>
-			            `<div class="comment-slide">
-			                <strong>${comment.myname}</strong>
-			                <p>${comment.comment}</p>
-			            </div>`
-			        ).join('');
-
-			        startSlidingComments(comments.length);
-			    }
-			};
-
-			const startSlidingComments = () => {
-			    const commentsSection = document.getElementById('comments-section');
-			    const slides = document.querySelectorAll('.comment-slide');
-			    const totalSlides = slides.length;
-
-    			let index = 0;
-
-			    setInterval(() => {
-			        // 모든 슬라이드 비활성화
-			        slides.forEach((slide, i) => {
-			            slide.classList.remove('active');
-			            slide.classList.add('inactive');
-			            slide.style.transform = `translateX(${100}%)`;
-			        });
-
-			        // 현재 슬라이드를 활성화
-			        slides[index].classList.add('active');
-			        slides[index].classList.remove('inactive');
-			        slides[index].style.transform = `translateX(0)`;
-
-			        // 이전 슬라이드를 왼쪽으로 이동
-			        const previousIndex = index === 0 ? totalSlides - 1 : index - 1;
-			        slides[previousIndex].style.transform = `translateX(-100%)`;
-
-			        // 다음 슬라이드로 이동
-			        index = (index + 1) % totalSlides;
-			    }, 2000); // 슬라이드 전환 간격 (2초)
-			};
-
-			const submitComment = async (event) => {
-			    event.preventDefault();
-			    const myname = document.getElementById('myname').value;
-			    const comment = document.getElementById('comment').value;
-
-			    if (!myname || !comment) {
-			        alert('Name and comment are required.');
-			        return;
-			    }
-
-			    const response = await fetch('/.netlify/functions/saveComment', {
-			        method: 'POST',
-			        headers: {
-			            'Content-Type': 'application/json'
-			        },
-			        body: JSON.stringify({ myname, comment })  // myname과 comment를 JSON으로 전송
-			    });
-
-			    if (response.ok) {
-				    await loadComments();
-				    if (window.confirm('댓글이 성공적으로 저장되었습니다.')) {
-				        window.location.reload();
-				    }
+			document.getElementById('lockMapBtn').addEventListener('click', function() {
+				if (isLocked) {
+					// 잠금 해제
+					document.querySelector('.root_daum_roughmap').style.pointerEvents = 'auto';
+					document.getElementById('lockIcon').classList.remove('fa-lock');
+					document.getElementById('lockIcon').classList.add('fa-unlock');
 				} else {
-				    const result = await response.json();
-				    alert(result.message);
+					// 잠금
+					document.querySelector('.root_daum_roughmap').style.pointerEvents = 'none';
+					document.getElementById('lockIcon').classList.remove('fa-unlock');
+					document.getElementById('lockIcon').classList.add('fa-lock');
 				}
-			};
+				isLocked = !isLocked;
+			});
 
-			document.getElementById('commentForm').addEventListener('submit', submitComment);
-			window.onload = loadComments;
+			// 페이지 로딩 시 기본적으로 지도 잠금
+			document.querySelector('.root_daum_roughmap').style.pointerEvents = 'none';
 		</script>
+
 	</body>
 </html>
