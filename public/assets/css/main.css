@@ -1820,6 +1820,7 @@ input, select, textarea {
 #comments-section {
     position: relative;
     min-height: 150px; /* 각 슬라이드의 높이를 적절히 설정 */
+    height: auto;
     overflow: hidden;
     display: flex;
     justify-content: flex-start;
