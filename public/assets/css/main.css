@@ -1819,7 +1819,7 @@ input, select, textarea {
 /* Comments */
 #comments-section {
     position: relative;
-    height: 150px; /* 각 슬라이드의 높이를 적절히 설정 */
+    min-height: 150px; /* 각 슬라이드의 높이를 적절히 설정 */
     overflow: hidden;
     display: flex;
     justify-content: flex-start;
