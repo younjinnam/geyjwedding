@@ -1436,10 +1436,17 @@ body.is-touch .main {
 }
 
 #comments-list {
+    font-size: 14px; /* 원하는 크기로 수정 */
     max-height: 300px;
     overflow-y: auto;
     padding-right: 1em;
-    font-size: 14px; /* 원하는 크기로 수정 */
+}
+
+#comments-list p {
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
 }
 
 #loadMoreContainer {
