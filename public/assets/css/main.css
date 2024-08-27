@@ -1379,7 +1379,7 @@ body.is-touch .main {
 
 @media screen and (max-width: 480px) {
 	#contact .box {
-		padding: 1em 1em 2em 1em;
+		padding: 0em;
 	}
 }
 
@@ -1423,27 +1423,23 @@ body.is-touch .main {
 
 #all-comments {
     margin-top: 2em;
-    padding: 1.5em;
+    padding: 0.2em;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#all-comments h3 {
-    margin-bottom: 1em;
+#all-comments-container h3 {
+    font-size: 14px; /* 원하는 크기로 수정 */
+    font-weight: 900; /* 기존의 굵기 유지 */
+    margin: 0; /* 이미 적용된 스타일 유지 */
 }
 
 #comments-list {
     max-height: 300px;
     overflow-y: auto;
     padding-right: 1em;
-}
-
-#comments-list p {
-    margin-bottom: 0.5em;
-    padding: 0.5em;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
+    font-size: 14px; /* 원하는 크기로 수정 */
 }
 
 #loadMoreContainer {
