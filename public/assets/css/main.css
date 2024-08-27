@@ -82,7 +82,7 @@ body {
 	min-width: 320px;
 	font-family: "Source Sans Pro", "sans-serif";
 	font-weight: 300;
-	font-size: 18pt;
+	font-size: 16pt;
 	line-height: 1.75em;
 	color: #39454b;
 	letter-spacing: 0.025em;
@@ -220,14 +220,14 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 }
 
 h2 {
-	font-size: 2.25em;
+	font-size: 2em;
 	line-height: 1.25em;
 	letter-spacing: -0.05em;
 }
 
 @media screen and (max-width: 736px) {
 	h2 {
-		font-size: 1.5em;
+		font-size: 1.25em;
 	}
 }
 
@@ -242,7 +242,7 @@ em, i {
 
 a {
 	transition: color 0.2s ease-in-out;
-	color: #98c593; 
+	color: #98c593;
 }
 
 sub {
@@ -311,10 +311,10 @@ button {
 	color: #ffffff;
 	cursor: pointer;
 	display: inline-block;
-	height: 3.5em;
-	line-height: 3.5em;
+	height: 3em;
+	line-height: 3em;
 	outline: 0;
-	padding: 0 2em 0 2em;
+	padding: 0 1.5em 0 1.5em;
 	position: relative;
 	text-align: center;
 	text-decoration: none;
@@ -430,7 +430,7 @@ textarea {
 	color: #39454b;
 	display: block;
 	width: 100%;
-	padding: 0.65em 0.75em;
+	padding: 0.5em 0.75em;
 	background: none;
 	border: solid 2px #e5e6e7;
 	color: inherit;
@@ -1397,7 +1397,7 @@ body.is-touch .main {
 .comment-slide {
     min-width: 100%;
     box-sizing: border-box;
-    font-size: 1.2em;
+    font-size: 1em;
     display: flex;
     flex-direction: column;
     justify-content: center;
