@@ -41,7 +41,7 @@
 <section id="one" class="main style2 right dark fullscreen">
 	<div class="content box style2">
 		<header>
-			<h2>초대합니다.</h2>
+			<h2>윤진 기은</h2>
 		</header>
 		<p>꽃향기 가득한 봄날,</p>
 		<p>평생 손잡고 나아갈 인연을 만나</p>
@@ -55,11 +55,86 @@
 <section id="two" class="main style2 left dark fullscreen">
 	<div class="content box style2">
 		<header>
-			<h2>Who I Am</h2>
+			<h2>저희 결혼합니다.</h2>
 		</header>
-		<p>Lorem ipsum dolor sit amet et sapien sed elementum egestas dolore condimentum.
-		   Fusce blandit ultrices sapien, in accumsan orci rhoncus eu. Sed sodales venenatis arcu,
-		   id varius justo euismod in. Curabitur egestas consectetur magna.</p>
+		<p>오늘도, 내일도 함께하고 싶은 사람이 생겼습니다.</p>
+		<p>함께라는걸 당연하게 생각하지 않겠습니다.</p>
+		<p>블라브랄</p>
+	</div>
+</section>
+
+<!-- D-Day Countdown -->
+<section id="d-day" class="main style2 right dark fullscreen">
+	<div class="content box style2">
+		<header>
+			<h2>D-Day Countdown</h2>
+		</header>
+		<p id="countdown"></p>
+		<div class="calendar">
+			<header>
+				<h3>February 2025</h3>
+			</header>
+			<table>
+				<thead>
+				<tr>
+					<th>Sun</th>
+					<th>Mon</th>
+					<th>Tue</th>
+					<th>Wed</th>
+					<th>Thu</th>
+					<th>Fri</th>
+					<th>Sat</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>1</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+					<td>6</td>
+					<td>7</td>
+					<td><span class="highlight">8</span></td>
+				</tr>
+				<tr>
+					<td>9</td>
+					<td>10</td>
+					<td>11</td>
+					<td>12</td>
+					<td>13</td>
+					<td>14</td>
+					<td>15</td>
+				</tr>
+				<tr>
+					<td>16</td>
+					<td>17</td>
+					<td>18</td>
+					<td>19</td>
+					<td>20</td>
+					<td>21</td>
+					<td>22</td>
+				</tr>
+				<tr>
+					<td>23</td>
+					<td>24</td>
+					<td>25</td>
+					<td>26</td>
+					<td>27</td>
+					<td>28</td>
+					<td></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </section>
 
@@ -214,6 +289,71 @@
 	// 페이지 로딩 시 기본적으로 지도 잠금
 	document.querySelector('.root_daum_roughmap').style.pointerEvents = 'none';
 </script>
+<!-- Countdown Script -->
+<script>
+	// Set the date we're counting down to
+	var countDownDate = new Date("Feb 8, 2025 00:00:00").getTime();
+
+	// Update the countdown every 1 second
+	var x = setInterval(function() {
+
+		// Get today's date and time
+		var now = new Date().getTime();
+
+		// Find the distance between now and the count down date
+		var distance = countDownDate - now;
+
+		// Time calculations for days, hours, minutes and seconds
+		var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+		var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+		// Output the result in an element with id="countdown"
+		document.getElementById("countdown").innerHTML = days + "day " + hours + ":" + minutes + ":" + seconds;
+
+		// If the countdown is finished, write some text
+		if (distance < 0) {
+			clearInterval(x);
+			document.getElementById("countdown").innerHTML = "EXPIRED";
+		}
+	}, 1000);
+</script>
+
+<!-- Calendar Styling -->
+<style>
+	.calendar {
+		max-width: 300px;
+		margin-top: 20px;
+		text-align: center;
+		border-collapse: collapse;
+	}
+
+	.calendar header h3 {
+		margin-bottom: 10px;
+		font-size: 1.5em;
+	}
+
+	.calendar table {
+		width: 100%;
+		border: 1px solid #ffffff;
+	}
+
+	.calendar th, .calendar td {
+		padding: 10px;
+		border: 1px solid #ffffff;
+	}
+
+	.calendar .highlight {
+		background-color: #f39c12;
+		color: white;
+		border-radius: 50%;
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		line-height: 30px;
+	}
+</style>
 
 </body>
 </html>
